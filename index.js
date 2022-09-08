@@ -1,33 +1,25 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import userModel from './userModel.js';
+import userRouter from './routes/userRouter.js';
 
 const app = express();
-const port = 1337;
+const port = 3004;
 
 dotenv.config();
+
 app.use(express.json());
 
 const connectionToDB = async () => {
   try {
     await mongoose.connect(process.env.MONGO_URL);
-    console.log('Connection to mongoDB is successfull!');
+    console.log('connection successfull!');
   } catch (error) {
     throw error;
   }
 };
 
-app.post('/create', async (req, res) => {
-  try {
-    const newUser = new userModel(req.body);
-    await newUser.save();
-    res.status(201).send('New user is created');
-  } catch (error) {
-    res.status(501).send(error);
-    throw error;
-  }
-});
+app.use('/api', userRouter);
 
 app.listen(port, () => {
   connectionToDB();
